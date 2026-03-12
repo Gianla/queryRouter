@@ -1,5 +1,3 @@
-- 
-
 # 🚀 QueryRouter
 
 **QueryRouter** is a lightweight, modular local tool that transforms your browser's address bar into a powerful command center. Powered by a local FastAPI server, you can define custom search shortcuts (e.g., `yt:music`, `gh:fastapi`) through a simple YAML file, effortlessly bypassing the search engine restrictions of modern browsers.
