@@ -1,5 +1,8 @@
+port: 9191
 default_engine: https://www.google.com/search?q=
 shortcuts:
+  qr, home, dash:
+      url: http://localhost:{port}/
   gm:
     url: https://mail.google.com/
     search: https://mail.google.com/mail/u/{query}/
@@ -30,7 +33,5 @@ shortcuts:
   ytm:
     url: https://music.youtube.com/
     search: https://music.youtube.com/search?q={query}
-  qr, home, dash:
-    url: http://localhost:9191/
   gh:
     url: https://github.com

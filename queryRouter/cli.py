@@ -4,13 +4,24 @@ import os
 import shutil
 from pathlib import Path
 from .server import app as fastapi_app
+from .config.loader import ConfigLoader
 
 app = typer.Typer(no_args_is_help=True)
 
 @app.command()
-def start(port: int = 9191, host: str = "127.0.0.1"):
-    """🚀 Start the redirect server."""
-    typer.echo(f"Running on http://{host}:{port}")
+def start(host: str = "127.0.0.1"):
+    """🚀 Start the redirect server using the port from config.yaml."""
+    # Carichiamo la porta dal file config.yaml
+    loader = ConfigLoader()
+    config = loader.load()
+    
+    # Prende la porta dal config, se non esiste usa 9191 come fallback
+    port = config.get("port", 9191)
+    
+    typer.echo(f"🚀 QueryRouter is starting...")
+    typer.echo(f"📍 Running on http://{host}:{port}")
+    
+    # Avviamo uvicorn sulla porta dinamica
     uvicorn.run("queryRouter.server:app", host=host, port=port, reload=True)
 
 @app.command()

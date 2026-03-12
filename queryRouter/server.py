@@ -215,4 +215,6 @@ DASHBOARD_HTML = """
 
 @app.get("/")
 async def dashboard():
-    return HTMLResponse(content=DASHBOARD_HTML)
+    config = router.loader.load()
+    port = config.get("port", 9191)
+    return HTMLResponse(content=DASHBOARD_HTML.replace("v0.6.0", f"Port: {port}"))

@@ -9,24 +9,25 @@ class Router:
         data = self.loader.load()
         shortcuts = data.get("shortcuts", {})
         default = data.get("default_engine", "https://www.google.com/search?q=")
+        current_port = data.get("port", 9191)
+
+        # --- DYNAMIC SYSTEM COMMANDS ---
+        if parsed.command in ["qr", "home", "dash"]:
+            return f"http://127.0.0.1:{current_port}/"
 
         target_conf = None
-        
-        # NEW LOGIC: Loop through keys and support comma-separated aliases
         for key, conf in shortcuts.items():
-            # Split "qr, home, dash" into a list: ['qr', 'home', 'dash']
-            aliases = [k.strip().lower() for k in key.split(",")]
-            
-            if parsed.keyword.lower() in aliases:
+            aliases = [k.strip().lower() for k in str(key).split(",")]
+            if parsed.command == key or parsed.command in aliases:
                 target_conf = conf
                 break
 
-        # If we found a match, process the URL
         if target_conf:
-            if parsed.payload and isinstance(target_conf, dict) and "search" in target_conf:
-                return target_conf["search"].replace("{query}", parsed.payload)
+            if parsed.query and isinstance(target_conf, dict) and "search" in target_conf:
+                return target_conf["search"].replace("{query}", parsed.query)
             if isinstance(target_conf, dict):
-                return target_conf.get("url", f"{default}{parsed.raw_query}")
+                return target_conf.get("url", f"{default}{parsed.command} {parsed.query}".strip())
+            if isinstance(target_conf, str):
+                return f"{target_conf}{parsed.query}" if parsed.query else target_conf
         
-        # Fallback to Google (or your default engine)
-        return f"{default}{parsed.raw_query}"
+        return f"{default}{parsed.command} {parsed.query}".strip()

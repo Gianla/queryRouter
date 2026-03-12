@@ -1,1 +1,1 @@
-from .query import ParsedQuery, Shortcut
+from .query import ParsedQuery, Shortcut, PortSettings
