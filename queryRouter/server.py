@@ -34,14 +34,13 @@ class NewShortcut(BaseModel):
 
 @app.get("/search")
 async def search(q: str = Query(...), request: Request = None):
-    # Log the incoming search and the client's IP address
-    client_ip = request.client.host if request else "Unknown"
-    logger.info(f"🔍 Search request from {client_ip}: '{q}'")
+    config = router.loader.load()
+    separator = config.get("separator", ":")
     
-    parsed = parser.parse(q)
+    parsed = parser.parse(q, separator=separator)
     target = router.get_destination(parsed)
     
-    logger.info(f"🚀 Redirecting to: {target}")
+    logger.info(f"🔍 '{q}' -> {target}")
     return RedirectResponse(url=target)
 
 @app.get("/api/config")

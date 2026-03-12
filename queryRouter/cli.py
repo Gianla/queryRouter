@@ -9,19 +9,14 @@ from .config.loader import ConfigLoader
 app = typer.Typer(no_args_is_help=True)
 
 @app.command()
-def start(host: str = "127.0.0.1"):
-    """🚀 Start the redirect server using the port from config.yaml."""
-    # Carichiamo la porta dal file config.yaml
+def start():
+    """🚀 Start the redirect server."""
     loader = ConfigLoader()
     config = loader.load()
-    
-    # Prende la porta dal config, se non esiste usa 9191 come fallback
     port = config.get("port", 9191)
+    host = "127.0.0.1"
     
-    typer.echo(f"🚀 QueryRouter is starting...")
-    typer.echo(f"📍 Running on http://{host}:{port}")
-    
-    # Avviamo uvicorn sulla porta dinamica
+    typer.echo(f"Starting QueryRouter on http://{host}:{port}")
     uvicorn.run("queryRouter.server:app", host=host, port=port, reload=True)
 
 @app.command()
