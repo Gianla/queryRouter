@@ -6,132 +6,154 @@
 
 ## ✨ Features
 
-- **⚡ Hot-Reload**: Edit the `config.yaml` file and changes are applied instantly—no server restart required.
-- **🌐 Cross-Browser**: Works seamlessly across Brave, Chrome, Safari, Firefox, and Edge.
-- **🎨 Web Dashboard**: A modern UI to manage your shortcuts (Add, Edit, Delete) without touching code.
-- **🛠️ Clean Architecture**: Modular structure divided into Parser, Router, and Models for maximum extensibility.
-- **🖥️ Integrated CLI**: Manage the tool with simple commands via the built-in command-line interface (e.g., `qr start`).
-- **🥷 Background Mode**: Support for invisible startup execution on Windows (via VBS script) and macOS (via native LaunchAgents).
-
-------
-
-## 📂 Project Structure
-
-
-```plaintext
-.
-├── config.yaml          # Your shortcut database & settings
-├── setup.py             # Python package configuration
-├── queryRouter/         # Application core
-│   ├── config/          # Dynamic YAML config loader
-│   ├── models/          # Pydantic data schemas
-│   ├── parser/          # Query extraction logic
-│   ├── router/          # Redirection logic
-│   ├── cli.py           # Command-line interface
-│   └── server.py        # FastAPI server & Web Dashboard
-└── run_router.vbs       # Invisible launcher (Windows only)
-```
+- **⚡ Hot-Reload**: Edit the `config.yaml` file and changes are applied instantly.
+- **🌐 Cross-Browser**: Works across Brave, Chrome, Safari, Firefox, and Edge.
+- **🎨 Web Dashboard**: A modern UI to manage your shortcuts without touching code.
+- **🛠️ Clean Architecture**: Modular structure divided into Parser, Router, and Models.
+- **🖥️ Integrated CLI**: Manage the tool with simple `qr` commands.
+- **🥷 Background Mode**: Support for invisible startup execution on Windows (VBS) and macOS (LaunchAgents).
 
 ------
 
 ## 🚀 Installation
 
-1. Ensure you have **Python 3.8+** installed on your system.
+1. **Clone the repository**:
+
+   Bash
 
    ```
-   python --version
-   ```
-
-2. Clone or download this repository.
-
-   ```bash
-   git clone https://github.com/your-username/queryRouter.git
+   git clone https://github.com/comiago/queryRouter.git
    cd queryRouter
    ```
 
-3. Open your terminal in the project directory and install it in editable mode:
+2. **Install in editable mode**:
 
-   ```bash
+   Bash
+
+   ```
    pip install -e .
    ```
 
-   *Note: If you see a "Warning: script not on PATH," add the indicated directory to your System Environment Variables.*
+### ⚠️ Important: Path Configuration (Windows)
+
+If you see a warning stating `The script qr.exe is installed in [Path] which is not on PATH`, you **must** add that folder to your System Environment Variables for the `qr` command to work:
+
+1. Copy the path shown in the warning.
+2. Search for "Edit the system environment variables" in Windows.
+3. Click **Environment Variables** > Select **Path** > **Edit** > **New**.
+4. Paste the path and click **OK**.
 
 ------
 
 ## ⚙️ Configuration (`config.yaml`)
 
-Customize your shortcuts and server settings. The app reloads these automatically.
+The app reloads automatically whenever you save this file.
 
-```yaml
+YAML
+
+```
 port: 9191
-separator: ":"  # Change to " " to use space-based search
+separator: ":"  # Syntax style (e.g., "yt:query")
 default_engine: "https://www.google.com/search?q="
 
 shortcuts:
   yt, tube:
     url: "https://www.youtube.com/"
     search: "https://www.youtube.com/results?search_query={query}"
-  gh:
-    url: "https://github.com/"
-    search: "https://github.com/search?q={query}"
 ```
 
 ------
 
-## 💻 CLI Usage
+## 💻 CLI & Background Execution
 
-The tool can be invoked from anywhere in your terminal using the `qr` command.
+### Manual Control
 
-- **Start the server manually**:
+- **Start server**: `qr start`
+- **macOS Service**: `qr install` / `qr uninstall`
 
-  ```bash
-  qr start
-  ```
+### 🪟 Windows: Run on Startup (Recommended)
 
-- **Install as a background service (macOS only)**:
+To make QueryRouter start automatically and invisibly when you turn on your PC:
 
-  ```bash
-  qr install
-  ```
-
-- **Remove the background service (macOS only)**:
-
-  ```bash
-  qr uninstall
-  ```
+1. Press `Win + R`, type `shell:startup`, and press Enter.
+2. **Right-click** the `run_router.vbs` file in your project folder and select **Create shortcut**.
+3. **Move** that new shortcut into the Startup folder you just opened.
+4. Done! QueryRouter will now run in the background every time you log in.
 
 ------
 
 ## 🌐 Browser Configuration
 
+To activate QueryRouter, you must instruct your browser to send searches to the local server.
+
 ### Brave / Chrome / Edge
 
-1. Go to browser Settings and look for **"Search engine"** or **"Site search"**.
-2. Add a new search engine:
+1. Go to **Settings** > **Search engine** > **Manage search engines and site search**.
+
+2. Under **Site search**, click **Add**:
+
    - **Search engine**: `QueryRouter`
-   - **Shortcut**: `@q` (or set as Default)
+   - **Shortcut**: `@q`
    - **URL with %s**: `http://127.0.0.1:9191/search?q=%s`
+
+   And set it as default search engine
 
 ### Safari (macOS)
 
-Install the free **Keyword Search** extension and set the Search URL to: `http://127.0.0.1:9191/search?q={query}`
+Since Safari doesn't natively support custom engines, use this free and open-source extension:
 
+1. Install **[Custom Search Engine](https://www.google.com/search?q=https://apps.apple.com/us/app/custom-search-engine/id1556615930)** from the Mac App Store.
+2. Open the extension and go to “Default Search Engine” section and write in “Search URL `http://127.0.0.1:9191/search?q={query}`
+3. Make sure the extension is enabled in *Safari -> Settings -> Extensions*.
 
+------
+
+## 💻 Background Execution & Autostart
+
+Don't want to open a terminal every time? Here is how to keep QueryRouter running silently in the background.
+
+### 🍎 macOS (LaunchAgent)
+
+QueryRouter includes a built-in command to handle the macOS background service using `launchd`.
+
+- **Install Service**:
+
+  Bash
+
+  ```
+  qr install
+  ```
+
+  *This creates a `.plist` file in your `~/Library/LaunchAgents` folder so the server starts automatically when you log in.*
+
+- **Remove Service**:
+
+  Bash
+
+  ```
+  qr uninstall
+  ```
+
+### 🪟 Windows (Startup Folder)
+
+1. Ensure `run_router.vbs` is in your project folder.
+2. Press `Win + R`, type `shell:startup`, and press Enter.
+3. **Right-click** `run_router.vbs` > **Create shortcut**.
+4. **Move** that shortcut into the Startup folder.
+5. The server will now run invisibly in the background on every login.
+
+------
 
 ### 🏠 Dashboard Access
 
-Access the management UI instantly by typing any of these magic shortcuts in your browser:
+Access the management UI instantly by typing any of these "magic" shortcuts in your address bar:
 
-- `qr`
-- `home`
-- `dash`
+`qr`, `home`, or `dash`.
 
 ------
 
 ## 🛠️ Built With
 
-- **[FastAPI](https://fastapi.tiangolo.com/)**: For lightning-fast HTTP redirects.
-- **[Typer](https://typer.tiangolo.com/)**: For the modern CLI experience.
-- **[TailwindCSS](https://tailwindcss.com/)**: For the sleek dashboard UI.
-- **[Pydantic](https://www.google.com/search?q=https://docs.pydantic.dev/)**: For robust data validation.
+- **FastAPI** & **Typer**
+- **TailwindCSS**
+- **Pydantic** & **PyYAML**
