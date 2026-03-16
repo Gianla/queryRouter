@@ -1,159 +1,314 @@
 # 🚀 QueryRouter
 
-**QueryRouter** is a lightweight, modular local tool that transforms your browser's address bar into a powerful command center. Powered by a local FastAPI server, you can define custom search shortcuts (e.g., `yt:music`, `gh:fastapi`) and manage them via a sleek web dashboard, effortlessly bypassing the search engine restrictions of modern browsers.
+**QueryRouter** turns your browser’s address bar into a **powerful command center**.
 
-------
+Instead of relying on the limited custom search systems built into modern browsers, QueryRouter runs a lightweight local server that lets you define **fast, flexible search shortcuts**.
+
+Type things like:
+
+```
+yt:lofi hip hop
+gh:fastapi
+wiki:rome
+maps:pisa
+```
+
+…and instantly jump to the right website.
+
+All powered by a **local FastAPI router** you fully control.
+
+---
 
 ## ✨ Features
 
-- **⚡ Hot-Reload**: Edit the `config.yaml` file and changes are applied instantly.
-- **🌐 Cross-Browser**: Works across Brave, Chrome, Safari, Firefox, and Edge.
-- **🎨 Web Dashboard**: A modern UI to manage your shortcuts without touching code.
-- **🛠️ Clean Architecture**: Modular structure divided into Parser, Router, and Models.
-- **🖥️ Integrated CLI**: Manage the tool with simple `qr` commands.
-- **🥷 Background Mode**: Support for invisible startup execution on Windows (VBS) and macOS (LaunchAgents).
+* ⚡ **Instant Shortcuts**
+  Define custom commands like `yt:music` or `gh:fastapi`.
 
-------
+* 🔄 **Hot Reload Configuration**
+  Edit `config.yaml` and changes apply instantly.
 
-## 🚀 Installation
+* 🌐 **Cross-Browser Support**
+  Works with Brave, Chrome, Firefox, Edge, and Safari.
 
-1. **Clone the repository**:
+* 🧠 **Smart Query Parsing**
+  Lightweight parsing system designed for speed.
 
-   Bash
+* 🎨 **Web Dashboard**
+  Manage shortcuts from a clean web UI.
 
-   ```
-   git clone https://github.com/comiago/queryRouter.git
-   cd queryRouter
-   ```
+* 🖥 **CLI Tooling**
+  Control the router with simple `qr` commands.
 
-2. **Install in editable mode**:
+* 🥷 **Background Mode**
+  Run silently on system startup.
 
-   Bash
+* 🧩 **Modular Architecture**
+  Clean separation between parser, router, and models.
 
-   ```
-   pip install -e .
-   ```
+---
 
-### ⚠️ Important: Path Configuration (Windows)
+# ⚡ Quick Example
 
-If you see a warning stating `The script qr.exe is installed in [Path] which is not on PATH`, you **must** add that folder to your System Environment Variables for the `qr` command to work:
+Your browser becomes a **command line for the internet**.
 
-1. Copy the path shown in the warning.
-2. Search for "Edit the system environment variables" in Windows.
-3. Click **Environment Variables** > Select **Path** > **Edit** > **New**.
-4. Paste the path and click **OK**.
+| Query           | Result           |
+| --------------- | ---------------- |
+| `yt:lofi`       | Search YouTube   |
+| `gh:fastapi`    | Search GitHub    |
+| `wiki:rome`     | Open Wikipedia   |
+| `maps:florence` | Open Google Maps |
 
-------
+---
 
-## ⚙️ Configuration (`config.yaml`)
+# 🚀 Quick Start
 
-The app reloads automatically whenever you save this file.
+Clone the repository:
 
-YAML
+```bash
+git clone https://github.com/comiago/queryRouter.git
+cd queryRouter
+```
+
+Install the project:
+
+```bash
+pip install -e .
+```
+
+Start the router:
+
+```bash
+qr start
+```
+
+Then configure your browser search engine to:
 
 ```
+http://127.0.0.1:9191/search?q=%s
+```
+
+Your address bar is now powered by **QueryRouter**.
+
+---
+
+# ⚙️ Configuration
+
+All shortcuts are defined in a simple YAML file.
+
+`config.yaml`
+
+```yaml
 port: 9191
-separator: ":"  # Syntax style (e.g., "yt:query")
+separator: ":"
 default_engine: "https://www.google.com/search?q="
 
 shortcuts:
   yt, tube:
     url: "https://www.youtube.com/"
     search: "https://www.youtube.com/results?search_query={query}"
+
+  gh:
+    url: "https://github.com/"
+    search: "https://github.com/search?q={query}"
 ```
 
-------
+Changes are applied **instantly** thanks to hot-reload.
 
-## 💻 CLI & Background Execution
+---
 
-### Manual Control
+# 🌐 Browser Setup
 
-- **Start server**: `qr start`
-- **macOS Service**: `qr install` / `qr uninstall`
+To use QueryRouter you must configure your browser to forward searches to the local server.
 
-### 🪟 Windows: Run on Startup (Recommended)
+### Chrome / Brave / Edge
 
-To make QueryRouter start automatically and invisibly when you turn on your PC:
+Go to:
 
-1. Press `Win + R`, type `shell:startup`, and press Enter.
-2. **Right-click** the `run_router.vbs` file in your project folder and select **Create shortcut**.
-3. **Move** that new shortcut into the Startup folder you just opened.
-4. Done! QueryRouter will now run in the background every time you log in.
+```
+Settings → Search engine → Manage search engines
+```
 
-------
+Add a new engine:
 
-## 🌐 Browser Configuration
+| Field    | Value                               |
+| -------- | ----------------------------------- |
+| Name     | QueryRouter                         |
+| Shortcut | @q                                  |
+| URL      | `http://127.0.0.1:9191/search?q=%s` |
 
-To activate QueryRouter, you must instruct your browser to send searches to the local server.
+Set it as **default**.
 
-### Brave / Chrome / Edge
-
-1. Go to **Settings** > **Search engine** > **Manage search engines and site search**.
-
-2. Under **Site search**, click **Add**:
-
-   - **Search engine**: `QueryRouter`
-   - **Shortcut**: `@q`
-   - **URL with %s**: `http://127.0.0.1:9191/search?q=%s`
-
-   And set it as default search engine
+---
 
 ### Safari (macOS)
 
-Since Safari doesn't natively support custom engines, use this free and open-source extension:
+Safari does not allow custom search engines natively.
 
-1. Install **[Custom Search Engine](https://www.google.com/search?q=https://apps.apple.com/us/app/custom-search-engine/id1556615930)** from the Mac App Store.
-2. Open the extension and go to “Default Search Engine” section and write in “Search URL `http://127.0.0.1:9191/search?q={query}`
-3. Make sure the extension is enabled in *Safari -> Settings -> Extensions*.
+Install the extension:
 
-------
+Custom Search Engine (Mac App Store)
 
-## 💻 Background Execution & Autostart
+Then configure:
 
-Don't want to open a terminal every time? Here is how to keep QueryRouter running silently in the background.
+```
+http://127.0.0.1:9191/search?q={query}
+```
 
-### 🍎 macOS (LaunchAgent)
+---
 
-QueryRouter includes a built-in command to handle the macOS background service using `launchd`.
+# 🖥 CLI Commands
 
-- **Install Service**:
+QueryRouter includes a built-in CLI.
 
-  Bash
+| Command        | Description                        |
+| -------------- | ---------------------------------- |
+| `qr start`     | Start the router server            |
+| `qr install`   | Install background service (macOS) |
+| `qr uninstall` | Remove background service          |
 
-  ```
-  qr install
-  ```
+---
 
-  *This creates a `.plist` file in your `~/Library/LaunchAgents` folder so the server starts automatically when you log in.*
+# 🧩 Architecture
 
-- **Remove Service**:
+QueryRouter follows a **simple modular architecture** designed for maintainability.
 
-  Bash
+```
+Browser Request
+       │
+       ▼
+ FastAPI Endpoint
+       │
+       ▼
+     Parser
+       │
+       ▼
+     Router
+       │
+       ▼
+  Redirect URL
+```
 
-  ```
-  qr uninstall
-  ```
+### Components
 
-### 🪟 Windows (Startup Folder)
+**Parser**
 
-1. Ensure `run_router.vbs` is in your project folder.
-2. Press `Win + R`, type `shell:startup`, and press Enter.
-3. **Right-click** `run_router.vbs` > **Create shortcut**.
-4. **Move** that shortcut into the Startup folder.
-5. The server will now run invisibly in the background on every login.
+Extracts the shortcut and query from the input.
 
-------
+Example:
 
-### 🏠 Dashboard Access
+```
+yt:music
+```
 
-Access the management UI instantly by typing any of these "magic" shortcuts in your address bar:
+becomes:
 
-`qr`, `home`, or `dash`.
+```
+shortcut → yt
+query → music
+```
 
-------
+---
 
-## 🛠️ Built With
+**Router**
 
-- **FastAPI** & **Typer**
-- **TailwindCSS**
-- **Pydantic** & **PyYAML**
+Resolves the shortcut using the configuration file and constructs the final URL.
+
+---
+
+**Models**
+
+Pydantic models used for validation and structured configuration.
+
+---
+
+# 🏠 Dashboard
+
+QueryRouter includes a lightweight dashboard for managing shortcuts.
+
+Access it directly from your browser by typing:
+
+```
+qr
+home
+dash
+```
+
+---
+
+# 🥷 Background Execution
+
+Run QueryRouter automatically on system startup.
+
+---
+
+### macOS
+
+Uses LaunchAgents.
+
+Install service:
+
+```bash
+qr install
+```
+
+Remove service:
+
+```bash
+qr uninstall
+```
+
+---
+
+### Windows
+
+Use the startup folder.
+
+1. Press `Win + R`
+2. Run:
+
+```
+shell:startup
+```
+
+3. Create a shortcut to:
+
+```
+run_router.vbs
+```
+
+QueryRouter will now run silently in the background.
+
+---
+
+# 🛠 Built With
+
+* FastAPI
+* Typer
+* Pydantic
+* PyYAML
+* TailwindCSS
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+---
+
+# 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# ⭐ Support the Project
+
+If you find QueryRouter useful, consider giving the repository a star.
+
+It helps others discover the project and motivates further development.
