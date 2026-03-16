@@ -6,6 +6,10 @@
 [![Issues](https://img.shields.io/github/issues/comiago/queryRouter)](https://github.com/comiago/queryRouter/issues)
 [![Last Commit](https://img.shields.io/github/last-commit/comiago/queryRouter)](https://github.com/comiago/queryRouter)
 
+## 🎬 Demo
+
+![QueryRouter Demo](assets/demo.gif)
+
 **QueryRouter** turns your browser’s address bar into a **powerful command center**.
 
 Instead of relying on the limited custom search systems built into modern browsers, QueryRouter runs a lightweight local server that lets you define **fast, flexible search shortcuts**.
